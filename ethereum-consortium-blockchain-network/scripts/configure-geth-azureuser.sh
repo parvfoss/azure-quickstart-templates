@@ -27,7 +27,7 @@ ADMIN_SITE_PORT=${14};  #Only supplied for NODE_TYPE=0
 
 MINER_THREADS=1;
 # Difficulty constant represents ~15 sec. block generation for one node
-DIFFICULTY_CONSTANT="0x3333";
+DIFFICULTY_CONSTANT="0x0200";
 
 HOMEDIR="/home/$AZUREUSER";
 VMNAME=`hostname`;
@@ -43,7 +43,7 @@ NODEKEY_FILE_PATH="$GETH_HOME/nodekey";
 # Scale difficulty
 ##################
 # Target difficulty scales with number of miners
-DIFFICULTY=`printf "0x%X" $(($DIFFICULTY_CONSTANT * $NUM_MN_NODES))`;
+DIFFICULTY=`printf "0x%X" $(($DIFFICULTY_CONSTANT * 1))`;
 
 ################
 # Update modules
