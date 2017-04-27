@@ -48,7 +48,6 @@ DIFFICULTY=`printf "0x%X" $(($DIFFICULTY_CONSTANT * 1))`;
 ################
 # Update modules
 ################
-sudo add-apt-repository -y ppa:ethereum/ethereum || exit 1;
 sudo apt-get -y update || exit 1;
 # To avoid intermittent issues with package DB staying locked when next apt-get runs
 sleep 5;
@@ -56,8 +55,26 @@ sleep 5;
 ##################
 # Install packages
 ##################
-sudo apt-get -y install npm=3.5.2-0ubuntu4 git=1:2.7.4-0ubuntu1 software-properties-common=0.96.20.4 ethereum || exit 1;
+sudo apt-get -y install npm=3.5.2-0ubuntu4 git=1:2.7.4-0ubuntu1 software-properties-common=0.96.20.5 || exit 1;
 sudo update-alternatives --install /usr/bin/node nodejs /usr/bin/nodejs 100 || exit 1;
+
+##############
+# Install geth
+##############
+wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.5.9-a07539fb.tar.gz || exit 1;
+wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.5.9-a07539fb.tar.gz.asc || exit 1;
+
+# Import geth buildserver keys
+gpg --recv-keys --keyserver hkp://keys.gnupg.net F9585DE6 C2FF8BBF 9BA28146 7B9E2481 D2A67EAC || exit 1;
+
+# Validate signature
+gpg --verify geth-alltools-linux-amd64-1.5.9-a07539fb.tar.gz.asc || exit 1;
+
+# Unpack archive
+tar xzf geth-alltools-linux-amd64-1.5.9-a07539fb.tar.gz || exit 1;
+
+# /usr/bin is in $PATH by default, we'll put our binaries there
+sudo cp geth-alltools-linux-amd64-1.5.9-a07539fb/* /usr/bin/ || exit 1;
 
 #############
 # Build node keys and node IDs
@@ -157,7 +174,7 @@ BOOTNODE_URLS="";
 for i in `seq 0 $(($NUM_BOOT_NODES - 1))`; do
 	BOOTNODE_URLS="${BOOTNODE_URLS}enode://${NODE_IDS[$i]}@#${MN_NODE_PREFIX}${i}#:${GETH_IPC_PORT}";
   if [ $i -lt $(($NUM_BOOT_NODES - 1)) ]; then
-  	BOOTNODE_URLS="${BOOTNODE_URLS},";
+  	BOOTNODE_URLS="${BOOTNODE_URLS} --bootnodes ";
   fi
 done
 
@@ -188,7 +205,7 @@ fi
 ##########################################
 # Setup rc.local for service start on boot
 ##########################################
-echo "sudo -u $AZUREUSER /bin/bash $HOMEDIR/start-private-blockchain.sh $GETH_CFG_FILE_PATH $PASSWD" | sudo tee /etc/rc.local 2>&1 1>/dev/null
+echo -e '#!/bin/bash' "\nsudo -u $AZUREUSER /bin/bash $HOMEDIR/start-private-blockchain.sh $GETH_CFG_FILE_PATH $PASSWD" | sudo tee /etc/rc.local 2>&1 1>/dev/null
 if [ $? -ne 0 ]; then
 	exit 1;
 fi
