@@ -157,7 +157,7 @@
   },
   "variables": {
     "location": "[resourceGroup().location]",
-    "artifactsLocationURL": "https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/ethereum-consortium-blockchain-network",
+    "artifactsLocationURL": "https://raw.githubusercontent.com/parvfoss/azure-quickstart-templates/master/ethereum-consortium-blockchain-network",
     "apiVersionDeployments": "2016-09-01",
     "apiVersionStorageAccounts": "2016-01-01",
     "apiVersionAvailabilitySets": "2016-03-30",
@@ -178,7 +178,6 @@
     "loadBalancerName": "[concat(variables('namingInfix'), '-LB')]",
     "loadBalancerBackendAddressPoolName": "LoadBalancerBackend1",
     "loadBalancerInboundNatRuleNamePrefix": "SSH-VM",
-    "metricsStorageAcctName": "[concat(uniqueString(resourceGroup().id, variables('namingInfix')), 'metrics')]",
     "numMNNodes": "[mul(parameters('numConsortiumMembers'), parameters('numMiningNodesPerMember'))]",
     "maxVMsPerStorageAcct": 20,
     "mnStorageAcctCount": "[add(div(variables('numMNNodes'), variables('maxVMsPerStorageAcct')), 1)]",
@@ -534,7 +533,6 @@
           "ethereumNetworkID":{"value": "[parameters('ethereumNetworkID')]"},
           "gethIPCPort":{"value": "[variables('gethIPCPort')]"},
           "adminSitePort":{"value": "[variables('adminSitePort')]"},
-          "metricsStorageAcctName":{"value": "[variables('metricsStorageAcctName')]"},
           "apiVersionStorageAccounts":{"value": "[variables('apiVersionStorageAccounts')]"},
           "location":{"value": "[variables('location')]"}
         }
